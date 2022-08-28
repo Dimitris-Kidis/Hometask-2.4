@@ -11,7 +11,7 @@
 --     - ALL ✅
 -- 3. Write one query using CASE in SELECT ✅
 -- 4. Write one query using Relational Division ✅
--- 5. .DOCX 1
+-- 5. .DOCX 1 ✅
 -- 6. .DOCX 2 ✅
 		
 USE Employees 
