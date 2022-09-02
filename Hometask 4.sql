@@ -11,7 +11,7 @@
 --     - ALL ✅
 -- 3. Write one query using CASE in SELECT ✅
 -- 4. Write one query using Relational Division ✅
--- 5. .DOCX 1 ✅
+-- 5. .DOCX 1
 -- 6. .DOCX 2 ✅
 		
 USE Employees 
@@ -58,15 +58,17 @@ WHERE
         WHERE d.Id = e.Id)
 ORDER BY Id
 
--- Correlated query in HAVING
-SELECT Gender, COUNT(e.Gender) AS AgeCountColumn FROM Users e
+-- Correlated query in HAVING *****
+DECLARE @AVG_RATE AS INT = 70;
+
+SELECT Price, COUNT(Price) AS PeopleCount FROM Users e
 INNER JOIN Specialists ON Specialists.Id = e.SpecialistId
 INNER JOIN [Services] ON [Services].SpecialistId = Specialists.Id
 WHERE EXISTS(SELECT Id
         FROM Specialists d
         WHERE d.Id = e.Id)
-GROUP BY Gender, Price
-HAVING Price > (SELECT AVG(Price) FROM [Services])
+GROUP BY Price
+HAVING Price * @AVG_RATE * 12 > (SELECT AVG(Price) * AVG(AvgWorkSessionsPerMonth) * 12 FROM [Services])
 
 
 -- 2 --
@@ -139,11 +141,13 @@ INSERT INTO PaymentMethod (Method) VALUES (1)
 INSERT INTO PaymentMethod (Method) VALUES (2)
 INSERT INTO PaymentMethod (Method) VALUES (3)
 
-SELECT DISTINCT Workers.Id, Workers.[Name] FROM Workers
-WHERE NOT EXISTS (SELECT * FROM PaymentMethod AS Method
-				  WHERE NOT EXISTS (SELECT * FROM Workers AS employees
-								    WHERE employees.Id = Workers.Id AND employees.PaymentMethod = Method.Method))
-ORDER BY Id
+
+SELECT W.Id, W.[Name]
+FROM Workers W, PaymentMethod PM
+WHERE W.PaymentMethod = PM.Method
+GROUP BY W.Id, W.[Name]
+HAVING COUNT(W.PaymentMethod) = (SELECT COUNT(Method) FROM PaymentMethod)
+
 
 DROP TABLE Workers
 DROP TABLE PaymentMethod
